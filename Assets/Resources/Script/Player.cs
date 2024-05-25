@@ -51,6 +51,7 @@ public class Player : MonoBehaviour, IActorTemplate
 
     public void Die()
     {
+        GameManager.Instance.LifeLost();
         Destroy(gameObject);
     }
 
@@ -126,8 +127,7 @@ public class Player : MonoBehaviour, IActorTemplate
                     health -= 1;
                 }
             }
-
-            if (health <= 0)
+            else
             {
                 Die();
             }
