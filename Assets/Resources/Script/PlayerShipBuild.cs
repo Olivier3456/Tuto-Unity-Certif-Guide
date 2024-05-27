@@ -8,8 +8,14 @@ public class PlayerShipBuild : MonoBehaviour
     [SerializeField] private GameObject[] shopButtons;
     private GameObject target;
     private GameObject tmpSelection;
-
     private GameObject textBoxPanel;
+    [SerializeField] private GameObject[] visualWeapons;
+    [SerializeField] private SOActorModel defaultPlayerShip;
+    private GameObject playerShip;
+    private GameObject buyButton;
+    private GameObject bankObj;
+    private int bank = 600;
+    private bool purchaseMade = false;
 
 
     private void Start()
@@ -17,7 +23,31 @@ public class PlayerShipBuild : MonoBehaviour
         TurnOffSelectionHighlights();
 
         textBoxPanel = GameObject.Find("textBoxPanel");
+
+        purchaseMade = false;
+        bankObj = GameObject.Find("bank");
+        bankObj.GetComponentInChildren<TextMesh>().text = bank.ToString();
+        buyButton = textBoxPanel.transform.Find("BUY ?").gameObject;
+        TurnOffPlayerShipVisuals();
+        PreparePlayerShipForUpgrade();
     }
+
+    private void TurnOffPlayerShipVisuals()
+    {
+        for (int i = 0; i < visualWeapons.Length; i++)
+        {
+            visualWeapons[i].gameObject.SetActive(false);
+        }
+    }
+
+    private void PreparePlayerShipForUpgrade()
+    {
+        playerShip = Instantiate(Resources.Load("Prefab/Player/Player_Ship")) as GameObject;
+        playerShip.GetComponent<Player>().enabled = false;
+        playerShip.transform.position = new Vector3(0, 10000, 0);
+        playerShip.GetComponent<IActorTemplate>().ActorStats(defaultPlayerShip);
+    }
+
 
     private void TurnOffSelectionHighlights()
     {
@@ -68,10 +98,44 @@ public class PlayerShipBuild : MonoBehaviour
                     TurnOffSelectionHighlights();
                     Select();
                     UpdateDescriptionBox();
+
+                    // Not already sold
+                    if (target.transform.Find("itemText").GetComponent<TextMesh>().text != "SOLD")
+                    {
+                        Affordable();
+                        LackOfCredits();
+                    }
+                    else
+                    {
+                        SoldOut();
+                    }
                 }
             }
         }
     }
+
+    private void Affordable()
+    {
+        if (bank >= Int32.Parse(target.transform.GetComponent<ShopPiece>().ShopSelection.cost))
+        {
+            Debug.Log("CAN BUY");
+            buyButton.SetActive(true);
+        }
+    }
+
+    private void LackOfCredits()
+    {
+        if (bank < Int32.Parse(target.transform.Find("itemText").GetComponent<TextMesh>().text))
+        {
+            Debug.Log("CAN'T BUY");
+        }
+    }
+
+    private void SoldOut()
+    {
+        Debug.Log("SOLD OUT");
+    }
+
 
     private void UpdateDescriptionBox()
     {
