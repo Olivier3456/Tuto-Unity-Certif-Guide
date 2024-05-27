@@ -1,4 +1,3 @@
-using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +15,7 @@ public class ShopPiece : MonoBehaviour
 
     private void Awake()
     {
-        if (GetComponentInChildren<SpriteRenderer>().sprite != null)
+        if (GetComponentInChildren<SpriteRenderer>() != null)
         {
             GetComponentInChildren<SpriteRenderer>().sprite = shopSelection.icon;
         }
