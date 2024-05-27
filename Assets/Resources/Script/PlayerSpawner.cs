@@ -1,32 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerSpawner : MonoBehaviour
+public class PlayerSpawner : MonoBehaviour 
 {
-    [SerializeField] private SOActorModel actorModel;
-    private GameObject playerShip;
+	SOActorModel actorModel;
+	GameObject playerShip;
+	
+	void Start()
+	{
+		CreatePlayer();
+	}
+	
+	void CreatePlayer()
+	{
+		//CREATE PLAYER
+        actorModel = Object.Instantiate(Resources.Load("Script/ScriptableObject/Player_Default")) as SOActorModel;
+        playerShip = GameObject.Instantiate(actorModel.actor) as GameObject;
+        playerShip.GetComponent<Player>().ActorStats(actorModel);
 
-
-    private void Start()
-    {
-        CreatePlayer();
-    }
-
-    private void CreatePlayer()
-    {
-        // Create player
-        //actorModel = Instantiate(Resources.Load("/Script/ScriptableObject/Player_Default") as SOActorModel);
-        //actorModel = Resources.Load("/Script/ScriptableObject/Player_Default") as SOActorModel;
-        playerShip = Instantiate(actorModel.actor);
-        playerShip.GetComponent<Player>().ActorStats(actorModel);   // Initialize Player stats.
-
-        // Set Player up
-        playerShip.transform.rotation = Quaternion.Euler(0, 180, 0);
-        playerShip.transform.localScale = Vector3.one * 60;
-        playerShip.GetComponentInChildren<ParticleSystem>().transform.localScale = Vector3.one * 25f;
-        playerShip.name = "Player";
-        playerShip.transform.SetParent(transform);
-        playerShip.transform.position = Vector3.zero;
-    }
+		//SET PLAYER UP
+		playerShip.transform.rotation = Quaternion.Euler(0,180,0);
+		playerShip.transform.localScale = new Vector3(60,60,60);
+		playerShip.GetComponentInChildren<ParticleSystem>().transform.localScale = new Vector3(25,25,25);
+		playerShip.name = "Player";
+		playerShip.transform.SetParent(this.transform); 
+	}
 }

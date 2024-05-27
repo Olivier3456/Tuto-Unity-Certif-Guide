@@ -1,95 +1,94 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Security;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour 
 {
-    [SerializeField] private GameObject dirLight;
-
-    private static GameManager instance;
-    public static GameManager Instance { get { return instance; } }
-
-    public static int currentScene = 0;
-    public static int gameLevelScene = 3;
-
-    private bool died = false;
-    public bool Died { get { return died; } set { died = value; } }
-
-    public static int playerLives = 3;
-
-
-    private void CreateSingleton()
+	public static int playerLives = 3;
+	public static int currentScene = 0;
+	public static int gameLevelScene = 3;
+	static GameManager instance;
+	
+	bool died = false;
+	public bool Died
+	{
+		get {return died;}
+		set {died = value;}
+	}
+	
+	public static GameManager Instance
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(this);
+		get { return instance; }
     }
 
+	void Awake()
+   {
+	  CheckGameManagerIsInTheScene();
+	  currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+	  LightandCameraSetup(currentScene);
+   }
 
-    private void Awake()
+	void CheckGameManagerIsInTheScene()
+	{
+	    if(instance == null)
     {
-        CreateSingleton();
-        currentScene = SceneManager.GetActiveScene().buildIndex;
-        LightAndCameraSetup(currentScene);
+		instance = this;
     }
-
-
-    private void LightAndCameraSetup(int sceneNumber)
+    else
     {
-        switch (sceneNumber)
-        {
-            case 3:
-            case 4:
-            case 5:
-            case 6:     // Game levels
-                {
-                    LightSetup();
-                    CameraSetup();
-                    break;
-                }
-        }
+		Destroy(this.gameObject);
     }
+		DontDestroyOnLoad(this);
+		CameraSetup();  
+        LightSetup();
+	}
 
-    private void CameraSetup()
+	void LightandCameraSetup(int sceneNumber)
+	{
+		switch (sceneNumber)
+		{
+			//testLevel, Level1, Level2, Level3
+			case 3 : case 4 :case 5: case 6:
+			{
+				LightSetup();
+				CameraSetup();
+				break;
+			}
+		}
+	}
+   
+    void CameraSetup()
     {
-        GameObject goCamera = Camera.main.gameObject;
-        goCamera.transform.position = new Vector3(0, 0, -300);
-        goCamera.transform.eulerAngles = Vector3.zero;
+		GameObject gameCamera = GameObject.FindGameObjectWithTag("MainCamera");
 
+        //Camera Transform
+        gameCamera.transform.position = new Vector3(0,0,-300);
+        gameCamera.transform.eulerAngles = new Vector3(0,0,0);
+		 
+		//Camera Properties
+        gameCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+        gameCamera.GetComponent<Camera>().backgroundColor = new Color32(0,0,0,255);
+	}
 
-        Camera camera = goCamera.GetComponent<Camera>();
-        camera.clearFlags = CameraClearFlags.SolidColor;
-        camera.backgroundColor = new Color32(0, 0, 0, 255);
-    }
-
-    private void LightSetup()
+    void LightSetup()
     {
-        dirLight.transform.eulerAngles = new Vector3(50, -30, 0);
-        dirLight.GetComponent<Light>().color = new Color32(152, 204, 255, 255);
+        GameObject dirLight = GameObject.Find("Directional Light");
+        dirLight.transform.eulerAngles = new Vector3(50,-30,0);
+        dirLight.GetComponent<Light>().color = new Color32(152,204,255,255);
     }
-
-    public void LifeLost()
-    {
-        if (playerLives > 0)
-        {
-            playerLives--;
-            Debug.Log($"Lives left: {playerLives}.");
-            GetComponent<ScenesManager>().ResetScene();
-        }
-        else
-        {
-            playerLives = 3;
-            GetComponent<ScenesManager>().GameOver();
-        }
-    }
+	
+	 public void LifeLost()
+	{
+		//lose life
+		if (playerLives >= 1)
+		{
+			playerLives--;
+			Debug.Log("Lives left:" +playerLives);
+			GetComponent<ScenesManager>().ResetScene();
+		}
+		    else
+		{
+			GetComponent<ScenesManager>().GameOver();
+			//reset lives back to 3. 
+			playerLives = 3;
+		}
+	}
 }

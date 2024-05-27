@@ -3,20 +3,20 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 586e5a269d9aa3542a71095fd1b8d9e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 454270ba86f08ae4fab2ebf16b834170, type: 3}
   m_Name: Player_Default
   m_EditorClassIdentifier: 
   actorName: Player
   attackType: 1
-  description: Player default ship.
+  description: Players default ship.
   health: 1
   speed: 120
   hitPower: 1
-  actor: {fileID: 2250360309703762504, guid: 44547c438551a114d907a13935ee0c11, type: 3}
-  actorsBullets: {fileID: 4920460180469487091, guid: 04a978ed168ad7146ad8792829dc4e3f, type: 3}
+  actor: {fileID: 1236211753169294, guid: 7a58ae435754d6e4ebdf9d97a4666c37, type: 2}
+  actorsBullets: {fileID: 1839147414846726, guid: 0d6a31cc9a0e4554fb8cfa63a01f6729,
+    type: 2}

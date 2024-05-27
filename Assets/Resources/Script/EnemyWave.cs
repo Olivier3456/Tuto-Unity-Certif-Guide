@@ -1,70 +1,72 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyWave : MonoBehaviour, IActorTemplate
 {
-    private int health;
-    private int travelSpeed;
-    private int fireSpeed;
-    private int hitPower;
-    private int score;
+ int health;
+ int travelSpeed;
+ int fireSpeed;
+ int hitPower;
+ int score;
+ 
+ //specfic for wave enemy
+ [SerializeField]
+ float verticalSpeed = 2;
+ [SerializeField]
+ float verticalAmplitude = 1;
+ Vector3 sineVer;
+ float time;
+ 
+ void Update ()
+ {
+     Attack();
+ }
+ 
+ public void ActorStats(SOActorModel actorModel)
+ {
+	health = actorModel.health;
+	travelSpeed = actorModel.speed;
+	hitPower = actorModel.hitPower;
+	score = actorModel.score;
+ }
+ 
+ public void Die()
+ {
+	Destroy(this.gameObject);
+ }
+ 
+ void OnTriggerEnter(Collider other)
+ {
+	// if the player or their bullet hits you....
+	if (other.tag == "Player")
+	{
+		if (health >= 1)
+		{
+			health -= other.GetComponent<IActorTemplate>().SendDamage();
+		}
+		if (health <= 0)
+		{
+			GameManager.Instance.GetComponent<ScoreManager>().SetScore(score);
+			Die();
+		}
+	}
+ }
+ 
+ public void TakeDamage(int incomingDamage)
+ {
+	health -= incomingDamage;
+ }
+ 
+ public int SendDamage()
+ {
+	return hitPower;
+ }
 
-
-    [SerializeField] private float verticalSpeed = 2f;
-    [SerializeField] private float verticalAmplitude = 1f;
-    private Vector3 sineVer;
-    private float time;
-
-
-    public void ActorStats(SOActorModel actorModel)
-    {
-        health = actorModel.health;
-        travelSpeed = actorModel.speed;
-        hitPower = actorModel.hitPower;
-        score = actorModel.score;
-    }
-
-    private void Update()
-    {
-        Attack();
-    }
-
-    private void Attack()
-    {
-        time += Time.deltaTime;
-        sineVer.y = Mathf.Sin(time * verticalSpeed) * verticalAmplitude;
-        transform.position = new Vector3(transform.position.x + travelSpeed * Time.deltaTime, transform.position.y + sineVer.y, transform.position.z);
-    }
-
-    public void Die()
-    {
-        Destroy(gameObject);
-    }
-
-    public int SendDamage()
-    {
-        return hitPower;
-    }
-
-    public void TakeDamage(int incomingDamage)
-    {
-        health -= incomingDamage;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            if (health > 0)
-            {
-                health -= other.GetComponent<IActorTemplate>().SendDamage();
-            }
-            else
-            {
-                Die();
-                GameManager.Instance.GetComponent<ScoreManager>().SetScore(score);
-            }
-        }
-    }
-}
+ public void Attack()
+ {
+	time += Time.deltaTime;
+	sineVer.y = Mathf.Sin(time * verticalSpeed) * verticalAmplitude;
+	transform.position = new Vector3(transform.position.x + travelSpeed * Time.deltaTime,
+	transform.position.y + sineVer.y,
+	transform.position.z);
+ }
+ }
