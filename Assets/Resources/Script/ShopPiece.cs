@@ -1,31 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ShopPiece : MonoBehaviour
+public class ShopPiece : MonoBehaviour 
 {
-    [SerializeField] private SOShopSelection shopSelection;
-    public SOShopSelection ShopSelection
-    {
-        get { return shopSelection; }
-        set { shopSelection = value; }
-    }
+	[SerializeField]
+	SOShopSelection shopSelection;
+	public SOShopSelection ShopSelection
+	{
+		get {return shopSelection; }
+		set {shopSelection = value; }
+	}
 
-
-
-    private void Awake()
-    {
-        if (GetComponentInChildren<SpriteRenderer>() != null)
-        {
-            GetComponentInChildren<SpriteRenderer>().sprite = shopSelection.icon;
-        }
-
-        if (transform.Find("itemText"))
-        {
-            GetComponentInChildren<TextMesh>().text = shopSelection.cost;
-        }
-
-
-    }
-
+	void Awake()
+	{
+		//icon slot
+		if (GetComponentInChildren<SpriteRenderer>() != null)
+		{
+			GetComponentInChildren<SpriteRenderer>().sprite = shopSelection.icon;
+		}
+		
+		//selection value
+		if(transform.Find("itemText"))
+		{
+			GetComponentInChildren<TextMesh>().text = shopSelection.cost;
+		}
+	}
 }
