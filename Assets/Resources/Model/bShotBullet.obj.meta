@@ -1,21 +1,21 @@
 fileFormatVersion: 2
-guid: 818411d1e6fe2554aa0605e9c53fd8ef
-timeCreated: 1592757190
+guid: 740bf511cda276a44a920019d7051ac7
+timeCreated: 1590237595
 licenseType: Pro
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: sShot
-    400000: //RootNode
-    400002: sShot
+    100000: sShot
+    100002: //RootNode
+    400000: sShot
+    400002: //RootNode
     2100000: sShotMat
     2300000: sShot
     3300000: sShot
     4300000: sShot
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -68,7 +68,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2
