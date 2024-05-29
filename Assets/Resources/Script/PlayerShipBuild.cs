@@ -1,7 +1,7 @@
 ﻿
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Monetization;
+//using UnityEngine.Monetization;
 
 public class PlayerShipBuild : MonoBehaviour
 {
@@ -137,32 +137,33 @@ public class PlayerShipBuild : MonoBehaviour
 
     void WatchAdvert()
     {
-        if (Application.internetReachability != NetworkReachability.NotReachable)
-        {
-            ShowRewardedAds();
-        }
-    }
-
-    IEnumerator WaitForAd()
-    {
-        string placementId = placementId_rewardedvideo;
-        //while (!Monetization.IsReady (placementId)) 
-        {
-            yield return null;
-        }
-
-        //ShowAdPlacementContent ad = null;
-        //ad = Monetization.GetPlacementContent (placementId) as ShowAdPlacementContent;
-
-        //if (ad != null) 
+        //if (Application.internetReachability != NetworkReachability.NotReachable)
         //{
-        //	ad.Show (AdFinished);          
-        //}
+        //  ShowRewardedAds();
+        //}   
 
-        AdFinished(new ShowResult());
+        AdFinished();
     }
 
-    void AdFinished(ShowResult result)
+    //IEnumerator WaitForAd()
+    //{
+    //    string placementId = placementId_rewardedvideo;
+    //    while (!Monetization.IsReady(placementId))
+    //    {
+    //        yield return null;
+    //    }
+
+    //    ShowAdPlacementContent ad = null;
+    //    ad = Monetization.GetPlacementContent(placementId) as ShowAdPlacementContent;
+
+    //    if (ad != null)
+    //    {
+    //        ad.Show(AdFinished);
+    //    }
+    //}
+
+    void AdFinished()
+    //void AdFinished (ShowResult result)
     {
         //if (result == ShowResult.Finished) 
         {
@@ -172,10 +173,12 @@ public class PlayerShipBuild : MonoBehaviour
         }
     }
 
-    void ShowRewardedAds()
-    {
-        StartCoroutine(WaitForAd());
-    }
+    //void ShowRewardedAds()
+    //{
+    //    StartCoroutine(WaitForAd());
+    //}
+
+
     void BuyItem()
     {
         Debug.Log("PURCHASED");
@@ -253,6 +256,7 @@ public class PlayerShipBuild : MonoBehaviour
             }
             DontDestroyOnLoad(playerShip);
         }
-        UnityEngine.SceneManagement.SceneManager.LoadScene("testLevel");
+        //UnityEngine.SceneManagement.SceneManager.LoadScene("testLevel");
+        GameManager.Instance.GetComponent<ScenesManager>().BeginGame(GameManager.gameLevelScene);
     }
 }
