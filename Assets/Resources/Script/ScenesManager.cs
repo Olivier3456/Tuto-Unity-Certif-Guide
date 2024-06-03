@@ -1,9 +1,15 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine;
-using System;
+using UnityEngine.UI;
+using System.Collections;
 
 public class ScenesManager : MonoBehaviour
 {
+    float gameTimer = 0;
+    float[] endLevelTimer = { 30, 30, 45 };
+    int currentSceneNumber = 0;
+    bool gameEnding = false;
+
     Scenes scenes;
     public enum Scenes
     {
@@ -13,32 +19,63 @@ public class ScenesManager : MonoBehaviour
         level1,
         level2,
         level3,
-        gameover
+        gameOver
     }
 
-    private float gameTimer = 0f;
-    private float[] endLevelTimer = { 30f, 30f, 45f };
-    private int currentSceneNumber = 0;
-    private bool gameEnding = false;
+    public enum MusicMode { noSound, fadeDown, musicOn }
 
-    public void ResetScene()
+    public MusicMode musicMode;
+
+    private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
     {
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        gameTimer = 0f;
-        SceneManager.LoadScene(GameManager.currentScene);
+        GetComponent<GameManager>().SetLivesDisplay(GameManager.playerLives);
+
+        if (GameObject.Find("score"))
+        {
+            GameObject.Find("score").GetComponent<Text>().text = ScoreManager.playerScore.ToString();
+        }
     }
 
-    private void NextLevel()
+    void Start()
     {
-        gameEnding = false;
-        gameTimer = 0f;
-        SceneManager.LoadScene(GameManager.currentScene + 1);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    public void BeginGame(int gameLevel)
+    void Update()
     {
-        //SceneManager.LoadScene("testLevel");
-        SceneManager.LoadScene(gameLevel);    
+        if (currentSceneNumber != SceneManager.GetActiveScene().buildIndex)
+        {
+            currentSceneNumber = SceneManager.GetActiveScene().buildIndex;
+            GetScene();
+        }
+        GameTimer();
+    }
+
+    private IEnumerator MusicVolume(MusicMode musicMode)
+    {
+        switch (musicMode)
+        {
+            case MusicMode.noSound:
+                GetComponentInChildren<AudioSource>().Stop();
+                break;
+            case MusicMode.fadeDown:
+                GetComponentInChildren<AudioSource>().volume -= Time.deltaTime * 0.33f;
+                break;
+            case MusicMode.musicOn:
+                if (GetComponentInChildren<AudioSource>().clip != null)
+                {
+                    GetComponentInChildren<AudioSource>().Play();
+                    GetComponentInChildren<AudioSource>().volume = 1;
+                }
+                break;
+        }
+        yield return new WaitForSeconds(0.1f);
+    }
+
+
+    void GetScene()
+    {
+        scenes = (Scenes)currentSceneNumber;
     }
 
     public void GameOver()
@@ -47,19 +84,7 @@ public class ScenesManager : MonoBehaviour
         SceneManager.LoadScene("gameOver");
     }
 
-
-    private void Update()
-    {
-        if (currentSceneNumber != SceneManager.GetActiveScene().buildIndex)
-        {
-            currentSceneNumber = SceneManager.GetActiveScene().buildIndex;
-            GetScene();
-        }
-
-        GameTimer();
-    }
-
-    private void GameTimer()
+    void GameTimer()
     {
         switch (scenes)
         {
@@ -69,10 +94,12 @@ public class ScenesManager : MonoBehaviour
                 {
                     if (gameTimer < endLevelTimer[currentSceneNumber - 3])
                     {
+                        //if level has not completed
                         gameTimer += Time.deltaTime;
                     }
                     else
                     {
+                        //if level is completed
                         if (!gameEnding)
                         {
                             gameEnding = true;
@@ -84,8 +111,7 @@ public class ScenesManager : MonoBehaviour
                             {
                                 GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerTransition>().GameCompleted = true;
                             }
-
-                            Invoke("NextLevel", 4f);
+                            Invoke("NextLevel", 4);
                         }
                     }
                     break;
@@ -93,8 +119,21 @@ public class ScenesManager : MonoBehaviour
         }
     }
 
-    private void GetScene()
+    void NextLevel()
     {
-        scenes = (Scenes)currentSceneNumber;
+        gameEnding = false;
+        gameTimer = 0;
+        SceneManager.LoadScene(GameManager.currentScene + 1);
+    }
+
+    public void ResetScene()
+    {
+        gameTimer = 0;
+        SceneManager.LoadScene(GameManager.currentScene);
+    }
+
+    public void BeginGame(int gameLevel)
+    {
+        SceneManager.LoadScene(gameLevel);
     }
 }

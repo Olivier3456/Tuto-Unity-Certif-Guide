@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0815416a038fc274a96afd5a12ef9f87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletModel: {fileID: 11400000, guid: 2202aafa3c405bb4f8dde0694b28c99d, type: 2}
+  bulletModel: {fileID: 11400000, guid: 4b42bee0cc101224d89dd16e1ab99038, type: 2}
 --- !u!135 &135023406596662628
 SphereCollider:
   m_ObjectHideFlags: 1

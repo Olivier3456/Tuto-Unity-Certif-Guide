@@ -1,109 +1,103 @@
-using System;
+﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class PlayerTransition : MonoBehaviour
+public class PlayerTransition : MonoBehaviour 
 {
-    private Vector3 start_game_pos = new Vector3(-100, 0, 0);
-    private Vector3 start_scene_pos;
-    private Vector3 transitionToCompleteGame = new Vector3(7000, 0, 0);
-    private Vector3 readyPos = new Vector3(9000, 0, 0);
-
-    private float distCovered;
-    private float journeyLength;
-
-    private bool levelStarted = true;
-    private bool speedOff = false;
-    private bool levelEnds = false;
-    private bool gameCompleted = false;
+    Vector3 transitionToEnd = new Vector3(-100,0,0);
+    Vector3 transitionToCompleteGame = new Vector3(7000,0,0);
+    Vector3 readyPos = new Vector3(900,0,0);
+    Vector3 startPos;
+	
+	float distCovered;
+	float journeyLength;
+	
+    bool levelStarted = true;
+    bool speedOff = false;
+    bool levelEnds = false;
+    bool gameCompleted = false;
 
     public bool LevelEnds
     {
-        get { return levelEnds; }
-        set { levelEnds = value; }
+        get {return levelEnds;}
+        set {levelEnds = value;}
     }
     public bool GameCompleted
     {
-        get { return gameCompleted; }
-        set { gameCompleted = value; }
+        get {return gameCompleted;}
+        set {gameCompleted = value;}
     }
-
-
-    private void Start()
+	
+	void Start()
     {
-        transform.localPosition = Vector3.zero;
-        start_scene_pos = transform.position;
+        this.transform.localPosition = Vector3.zero;
+        startPos = transform.position;
         Distance();
     }
-
-    private void Update()
+	
+	void Distance()
+    {
+        journeyLength = Vector3.Distance(startPos, readyPos);
+    }
+	
+	void Update()
     {
         if (levelStarted)
         {
-            StartCoroutine(PlayerMovement(start_game_pos, 10f));
+            StartCoroutine(PlayerMovement(transitionToEnd, 10)); 
         }
-
-        if (levelEnds)
+		
+		if (levelEnds)
         {
             GetComponent<Player>().enabled = false;
             GetComponent<SphereCollider>().enabled = false;
             Distance();
-            StartCoroutine(PlayerMovement(start_game_pos, 200f));
+            StartCoroutine(PlayerMovement(transitionToEnd,200));
         }
-
+		
         if (gameCompleted)
         {
             GetComponent<Player>().enabled = false;
             GetComponent<SphereCollider>().enabled = false;
-            StartCoroutine(PlayerMovement(start_game_pos, 200f));
+            StartCoroutine(PlayerMovement(transitionToCompleteGame,200));
         }
-
+		
         if (speedOff)
-        {
-            Invoke("SpeedOff", 1f);
-        }
-    }
-
-    private IEnumerator PlayerMovement(Vector3 arrival, float transitionSpeed)
+		{
+			Invoke("SpeedOff",1f);
+		}
+	}
+	
+	IEnumerator PlayerMovement(Vector3 point, float transitionSpeed)
     {
-        if (Mathf.Round(transform.localPosition.x) >= readyPos.x - 5f &&
-            Mathf.Round(transform.localPosition.x) <= readyPos.x + 5f &&
-            Mathf.Round(transform.localPosition.y) >= readyPos.y - 5f &&
-            Mathf.Round(transform.localPosition.y) <= readyPos.y + 5f)
+		if (Mathf.Round(transform.localPosition.x) >= readyPos.x -5 &&        //1st
+            Mathf.Round(transform.localPosition.x) <= readyPos.x +5 &&        //2nd
+            Mathf.Round(transform.localPosition.y) >= -5f &&                  //3rd
+            Mathf.Round(transform.localPosition.y) <= +5f)                    //4th
         {
-            Debug.Log("Player ship is at ready pos");
-
-            if (levelEnds)
+		 if (levelEnds)
             {
-                levelEnds = false;
-                speedOff = true;
+               levelEnds = false;
+               speedOff = true;
             }
 
             if (levelStarted)
             {
                 levelStarted = false;
-                distCovered = 0f;
-                GetComponent<Player>().enabled = true;
+                distCovered = 0;
+                GetComponent<Player>().enabled = true; 
             }
-            yield return null;
-        }
-        else
+            yield return null; 
+		}
+	    else
         {
-            distCovered += Time.deltaTime * transitionSpeed;
-            float fractionOfJourney = distCovered / journeyLength;
-            transform.position = Vector3.Lerp(transform.position, arrival, fractionOfJourney);
+          distCovered += Time.deltaTime * transitionSpeed;
+          float fractionOfJourney = distCovered / journeyLength;
+          transform.position = Vector3.Lerp(transform.position, point, fractionOfJourney);
         }
     }
-
-    private void SpeedOff()
+	
+	void SpeedOff()
     {
-        transform.Translate(Vector3.left * Time.deltaTime * 800);
-    }
-
-
-    private void Distance()
-    {
-        journeyLength = Vector3.Distance(start_scene_pos, readyPos);
+        transform.Translate(Vector3.left * Time.deltaTime*800);
     }
 }
