@@ -28,6 +28,8 @@ public class ScenesManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
     {
+        StartCoroutine(MusicVolume(MusicMode.musicOn));
+
         GetComponent<GameManager>().SetLivesDisplay(GameManager.playerLives);
 
         if (GameObject.Find("score"))
@@ -38,6 +40,7 @@ public class ScenesManager : MonoBehaviour
 
     void Start()
     {
+        StartCoroutine(MusicVolume(MusicMode.musicOn));
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -96,10 +99,19 @@ public class ScenesManager : MonoBehaviour
                     {
                         //if level has not completed
                         gameTimer += Time.deltaTime;
+
+                        if (GetComponentInChildren<AudioSource>().clip == null)
+                        {
+                            AudioClip lvlMusic = Resources.Load<AudioClip>("Sound/lvlMusic");
+                            GetComponentInChildren<AudioSource>().clip = lvlMusic;
+                            GetComponentInChildren<AudioSource>().Play();
+                        }
                     }
                     else
                     {
                         //if level is completed
+
+                        StartCoroutine(MusicVolume(MusicMode.fadeDown));
                         if (!gameEnding)
                         {
                             gameEnding = true;
@@ -114,6 +126,15 @@ public class ScenesManager : MonoBehaviour
                             Invoke("NextLevel", 4);
                         }
                     }
+
+
+
+
+                    break;
+                }
+            default:
+                {
+                    GetComponentInChildren<AudioSource>().clip = null;
                     break;
                 }
         }
@@ -124,10 +145,12 @@ public class ScenesManager : MonoBehaviour
         gameEnding = false;
         gameTimer = 0;
         SceneManager.LoadScene(GameManager.currentScene + 1);
+        StartCoroutine(MusicVolume(MusicMode.musicOn));
     }
 
     public void ResetScene()
     {
+        StartCoroutine(MusicVolume(MusicMode.noSound));
         gameTimer = 0;
         SceneManager.LoadScene(GameManager.currentScene);
     }
