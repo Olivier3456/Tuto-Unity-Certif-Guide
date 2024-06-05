@@ -1,9 +1,12 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class PauseComponent : MonoBehaviour
 {
     [SerializeField] private GameObject pauseScreen;
+
+    [SerializeField] private AudioMixer audioMixer;
 
     private void Awake()
     {
