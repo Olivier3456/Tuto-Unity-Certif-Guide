@@ -24,12 +24,25 @@ public class Player : MonoBehaviour, IActorTemplate
     float width;
     float height;
 
+
+    private float camTravelSpeed;
+    public float CamTravelSpeed
+    {
+        get { return camTravelSpeed; }
+        set { camTravelSpeed = value; }
+    }
+
+    private float movingScreen;
+
+
     void Start()
     {
         height = 1 / (Camera.main.WorldToViewportPoint(new Vector3(1, 1, 0)).y - .5f);
         width = 1 / (Camera.main.WorldToViewportPoint(new Vector3(1, 1, 0)).x - .5f);
 
         _Player = GameObject.Find("_Player");
+
+        movingScreen = width;
     }
 
     void Update()
@@ -85,9 +98,17 @@ public class Player : MonoBehaviour, IActorTemplate
 
     void Movement()
     {
+        if (camTravelSpeed > 1)
+        {
+            transform.position += Vector3.right * Time.deltaTime * camTravelSpeed;
+            movingScreen += Time.deltaTime * camTravelSpeed;
+        }
+
+
+
         if (Input.GetAxisRaw("Horizontal") > 0)
         {
-            if (transform.localPosition.x < width + width / 0.9f)
+            if (transform.localPosition.x < movingScreen + width / 0.9f)
             {
                 transform.localPosition += new Vector3(Input.GetAxisRaw("Horizontal") * Time.deltaTime * travelSpeed, 0, 0);
             }
@@ -95,7 +116,7 @@ public class Player : MonoBehaviour, IActorTemplate
 
         if (Input.GetAxisRaw("Horizontal") < 0)
         {
-            if (transform.localPosition.x > width + width / 6)
+            if (transform.localPosition.x > movingScreen + width / 6)
             {
                 transform.localPosition += new Vector3(Input.GetAxisRaw("Horizontal") * Time.deltaTime * travelSpeed, 0, 0);
             }

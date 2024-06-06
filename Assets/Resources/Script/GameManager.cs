@@ -43,17 +43,25 @@ public class GameManager : MonoBehaviour
         {
             case 3:
             case 4:
+                {
+                    LightSetup();
+                    CameraSetup(0);
+                    break;
+                }
             case 5:
+                {
+                    CameraSetup(150f);
+                    break;
+                }
             case 6:
                 {
                     LightSetup();
-                    CameraSetup();
                     break;
                 }
         }
     }
 
-    void CameraSetup()
+    void CameraSetup(float camSpeed)
     {
         GameObject gameCamera = GameObject.FindGameObjectWithTag("MainCamera");
 
@@ -64,16 +72,15 @@ public class GameManager : MonoBehaviour
         //Camera Properties
         gameCamera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
         gameCamera.GetComponent<Camera>().backgroundColor = new Color32(0, 0, 0, 255);
+
+        gameCamera.GetComponent<CameraMovement>().CamSpeed = camSpeed;
     }
 
     void LightSetup()
     {
-        if (SceneManager.GetActiveScene().name != "level3" && SceneManager.GetActiveScene().name != "Level3")
-        {
-            GameObject dirLight = GameObject.Find("Directional Light");
-            dirLight.transform.eulerAngles = new Vector3(50, -30, 0);
-            dirLight.GetComponent<Light>().color = new Color32(152, 204, 255, 255);
-        }
+        GameObject dirLight = GameObject.Find("Directional Light");
+        dirLight.transform.eulerAngles = new Vector3(50, -30, 0);
+        dirLight.GetComponent<Light>().color = new Color32(152, 204, 255, 255);
     }
 
     public void LifeLost()
