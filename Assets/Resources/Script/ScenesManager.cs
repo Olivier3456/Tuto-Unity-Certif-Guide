@@ -2,11 +2,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 public class ScenesManager : MonoBehaviour
 {
     float gameTimer = 0;
-    float[] endLevelTimer = { 30, 30, 45 };
+    float[] endLevelTimer = { 10, 10, 20 };
     int currentSceneNumber = 0;
     bool gameEnding = false;
 
@@ -42,6 +43,8 @@ public class ScenesManager : MonoBehaviour
     {
         StartCoroutine(MusicVolume(MusicMode.musicOn));
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        Debug.Log("Les game stats seront sauvegardées dans ce fichier : " + Application.persistentDataPath + "/GameStatsSaved.json");
     }
 
     void Update()
@@ -110,12 +113,11 @@ public class ScenesManager : MonoBehaviour
                     else
                     {
                         //if level is completed
-
                         StartCoroutine(MusicVolume(MusicMode.fadeDown));
                         if (!gameEnding)
                         {
                             gameEnding = true;
-                            if (SceneManager.GetActiveScene().name != "level3")
+                            if (SceneManager.GetActiveScene().name != "level3" || SceneManager.GetActiveScene().name != "Level3")
                             {
                                 GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerTransition>().LevelEnds = true;
                             }
@@ -123,6 +125,9 @@ public class ScenesManager : MonoBehaviour
                             {
                                 GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerTransition>().GameCompleted = true;
                             }
+
+                            SendInJsonFormat(SceneManager.GetActiveScene().name);
+
                             Invoke("NextLevel", 4);
                         }
                     }
@@ -137,6 +142,22 @@ public class ScenesManager : MonoBehaviour
                     GetComponentInChildren<AudioSource>().clip = null;
                     break;
                 }
+        }
+    }
+
+    private void SendInJsonFormat(string lastLevel)
+    {
+        if (lastLevel == "level3" || lastLevel == "Level3")
+        {
+            Debug.Log("Making a json from game stats");
+
+            GameStats gameStats = new GameStats();
+            gameStats.livesLeft = GameManager.playerLives;
+            gameStats.completed = System.DateTime.Now.ToString();
+            gameStats.score = ScoreManager.playerScore;
+            string json = JsonUtility.ToJson(gameStats, true);
+            Debug.Log(json);
+            System.IO.File.WriteAllText(Application.persistentDataPath + "/GameStatsSaved.json", json);
         }
     }
 

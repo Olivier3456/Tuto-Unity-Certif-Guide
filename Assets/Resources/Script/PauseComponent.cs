@@ -6,13 +6,28 @@ public class PauseComponent : MonoBehaviour
 {
     [SerializeField] private GameObject pauseScreen;
 
-    [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private AudioMixer masterMixer;
+
+    [SerializeField] private GameObject musicSlider;
+    [SerializeField] private GameObject effectsSlider;
+
+    private const string musicVol = "musicVol";
+    private const string effectsVol = "effectsVol";
 
     private void Awake()
     {
         pauseScreen.SetActive(false);
         SetPauseButtonActive(false);
-        Invoke("DelayPauseAppear", 5);
+        Invoke("DelayPauseAppear", 5);        
+    }
+
+    private void Start()
+    {
+        masterMixer.SetFloat(musicVol, PlayerPrefs.GetFloat(musicVol));
+        masterMixer.SetFloat(effectsVol, PlayerPrefs.GetFloat(effectsVol));
+
+        musicSlider.GetComponent<Slider>().value = GetMusicVolumeFromMixer();
+        effectsSlider.GetComponent<Slider>().value = GetEffectsVolumeFromMixer();
     }
 
     private void DelayPauseAppear()
@@ -66,5 +81,43 @@ public class PauseComponent : MonoBehaviour
         GetComponentInChildren<Toggle>().transform.GetChild(0).GetChild(0).gameObject.SetActive(isActive);
     }
 
+    public void SetMusicVolumeFromSlider()
+    {
+        masterMixer.SetFloat(musicVol, musicSlider.GetComponent<Slider>().value);
+        PlayerPrefs.SetFloat(musicVol, musicSlider.GetComponent<Slider>().value);
+    }
 
+    public void SetEffectsVolumeFromSlider()
+    {
+        masterMixer.SetFloat(effectsVol, effectsSlider.GetComponent<Slider>().value);
+        PlayerPrefs.SetFloat(effectsVol, effectsSlider.GetComponent<Slider>().value);
+    }
+
+    private float GetMusicVolumeFromMixer()
+    {
+        float musicMixerValue;
+        bool result = masterMixer.GetFloat(musicVol, out musicMixerValue);
+        if (result)
+        {
+            return musicMixerValue;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private float GetEffectsVolumeFromMixer()
+    {
+        float effectsMixerValue;
+        bool result = masterMixer.GetFloat(effectsVol, out effectsMixerValue);
+        if (result)
+        {
+            return effectsMixerValue;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }

@@ -3,15 +3,16 @@ using UnityEngine;
 
 public class TitleComponent : MonoBehaviour
 {
-  void Update()
-  {
-    if (Input.GetButtonDown("Fire1"))
+    //void Start()
+    //{
+    //    GameManager.playerLives = 3;
+    //}
+
+    void Update()
     {
-      SceneManager.LoadScene("shop");
+        if (Input.GetButtonDown("Fire1"))
+        {
+            SceneManager.LoadScene("shop");
+        }
     }
-  }
-  void Start()
-  {
-    GameManager.playerLives = 3;
-  }
 }
