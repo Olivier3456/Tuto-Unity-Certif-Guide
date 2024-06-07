@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using Unity.AI.Navigation;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.AI;
 
-public class EnemyFlee : MonoBehaviour, IActorTemplate {
-
+public class EnemyFlee : MonoBehaviour, IActorTemplate
+{
     [SerializeField]
     SOActorModel actorModel;
     int health;
@@ -9,14 +12,62 @@ public class EnemyFlee : MonoBehaviour, IActorTemplate {
     int hitPower;
     int score;
 
-	    public void ActorStats(SOActorModel actorModel)
+    [SerializeField] private float enemyDistanceRun = 200f;
+    private GameObject player;
+    private bool gameStarts;
+    private NavMeshAgent enemyAgent;
+
+
+    private void Start()
+    {
+        ActorStats(actorModel);
+        Invoke("DelayedStart", 0.5f);
+    }
+
+
+    public void ActorStats(SOActorModel actorModel)
     {
         health = actorModel.health;
         hitPower = actorModel.hitPower;
         score = actorModel.score;
+        GetComponent<NavMeshAgent>().speed = actorModel.speed;
     }
 
-	public void TakeDamage(int incomingDamage)
+
+    private void DelayedStart()
+    {
+        gameStarts = true;
+        player = FindAnyObjectByType<Player>(FindObjectsInactive.Include).gameObject;
+
+        enemyAgent = GetComponent<NavMeshAgent>();
+    }
+
+
+    private void Update()
+    {
+        if (gameStarts)
+        {
+            if (player != null)
+            {
+                float distance = Vector3.Distance(transform.position, player.transform.position);
+
+                if (distance < enemyDistanceRun)
+                {
+                    //Debug.Log("Enemy detected!");
+
+                    Vector3 dirToPlayer = transform.position - player.transform.position;
+                    Vector3 newPos = transform.position + dirToPlayer;
+
+                    enemyAgent.SetDestination(newPos);
+                }
+            }
+        }
+    }
+
+
+
+
+    public void TakeDamage(int incomingDamage)
     {
         health -= incomingDamage;
     }
@@ -24,19 +75,19 @@ public class EnemyFlee : MonoBehaviour, IActorTemplate {
     {
         return hitPower;
     }
-	public void Die()
+    public void Die()
     {
         Destroy(this.gameObject);
     }
 
-	    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         // if the player or their bullet hits you....
         if (other.tag == "Player")
         {
             if (health >= 1)
             {
-                health -= other.GetComponent<IActorTemplate>().SendDamage();    
+                health -= other.GetComponent<IActorTemplate>().SendDamage();
             }
             if (health <= 0)
             {
