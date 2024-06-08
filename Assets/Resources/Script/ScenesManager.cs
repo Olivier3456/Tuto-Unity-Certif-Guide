@@ -7,7 +7,7 @@ using System;
 public class ScenesManager : MonoBehaviour
 {
     float gameTimer = 0;
-    float[] endLevelTimer = { 10, 10, 20 };
+    float[] endLevelTimer = { 10, 10, 90 };
     int currentSceneNumber = 0;
     bool gameEnding = false;
 
