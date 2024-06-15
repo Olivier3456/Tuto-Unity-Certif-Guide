@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour, IActorTemplate
 {
@@ -119,7 +120,7 @@ rb = GetComponent<Rigidbody>();
 
     private void MobileControls()
     {
-        if (Input.touchCount > 0)
+        if (Input.touchCount > 0 && EventSystem.current.currentSelectedGameObject == null)
         {
             Touch touch = Input.GetTouch(0);
             Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 300f));
@@ -247,8 +248,10 @@ rb = GetComponent<Rigidbody>();
 
     public void Die()
     {
+        GameObject explode = Instantiate(Resources.Load("Prefab/explode")) as GameObject;
+        explode.transform.position = gameObject.transform.position;
         GameManager.Instance.LifeLost();
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 
     public void Attack()

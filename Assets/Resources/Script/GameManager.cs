@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -19,6 +21,10 @@ public class GameManager : MonoBehaviour
     }
     void Awake()
     {
+#if UNITY_ANDROID
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+#endif
+
         CheckGameManagerIsInTheScene();
         currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
         LightandCameraSetup(currentScene);
@@ -45,7 +51,7 @@ public class GameManager : MonoBehaviour
             case 4:
                 {
                     LightSetup();
-                    CameraSetup(0);
+                    CameraSetup(150f);
                     break;
                 }
             case 5:
@@ -85,6 +91,13 @@ public class GameManager : MonoBehaviour
 
     public void LifeLost()
     {
+        StartCoroutine(DelayedLifeLost());
+    }
+
+    private IEnumerator DelayedLifeLost()
+    {
+        yield return new WaitForSeconds(2f);
+
         //lose life
         if (playerLives >= 1)
         {

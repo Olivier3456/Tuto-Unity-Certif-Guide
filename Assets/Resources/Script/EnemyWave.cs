@@ -31,7 +31,9 @@ public class EnemyWave : MonoBehaviour, IActorTemplate
 
     public void Die()
     {
-        Destroy(this.gameObject);
+        GameObject explode = Instantiate(Resources.Load("Prefab/explode")) as GameObject;
+        explode.transform.position = gameObject.transform.position;
+        Destroy(gameObject);
     }
 
     void OnTriggerEnter(Collider other)

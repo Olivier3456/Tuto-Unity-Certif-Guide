@@ -12,7 +12,7 @@ public class CameraMovement : MonoBehaviour
 
     void Start()
     {
-        Invoke("DelayStart", 7f);
+        Invoke("DelayStart", 5f);
     }
 
     void DelayStart()

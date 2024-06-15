@@ -7,7 +7,7 @@ using System;
 public class ScenesManager : MonoBehaviour
 {
     float gameTimer = 0;
-    float[] endLevelTimer = { 10, 10, 90 };
+    float[] endLevelTimer = { 30, 30, 60 };
     int currentSceneNumber = 0;
     bool gameEnding = false;
 
@@ -184,6 +184,7 @@ public class ScenesManager : MonoBehaviour
 
     public void BeginGame(int gameLevel)
     {
+        gameTimer = 0;
         SceneManager.LoadScene(gameLevel);
     }
 }
